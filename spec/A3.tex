@@ -1,0 +1,211 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{amsfonts}
+\usepackage{listings}
+\usepackage{url}
+
+\oddsidemargin 0mm
+\evensidemargin 0mm
+\textwidth 160mm
+\textheight 200mm
+\renewcommand\baselinestretch{1.0}
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+\newcommand\CC{C\texttt{++}}
+
+\title{Assignment 3}
+\author{COMP SCI 2ME3 and SFWR ENG 2AA4}
+
+\begin {document}
+
+\maketitle
+
+\begin{description}
+\item [Assigned:] February 25, 2019
+\item [Part 1 (Spec):]  March 1, 2019
+\item [Receive Full Spec:] March 6, 2019
+\item [Part 2 (Implement and Test):] March 22, 2019
+\item [Last Revised:] \today
+\end{description}
+
+\noindent All submissions are made through git, using your own repo located at:\\
+
+\texttt{https://gitlab.cas.mcmaster.ca/se2aa4\_cs2me3\_assignments\_2018/[macid].git}\\
+
+\noindent where \texttt{[macid]} should be replaced with your actual macid.  The
+time for all deadlines is 11:59 pm.  
+
+\section{Introduction}
+
+The purpose of this software design exercise is to design and implement a
+portion of the specification for the game of Forty Thieves
+(\url{https://greenfelt.net/fortythieves}).  For Part 1, you are given a partial
+specification and asked to fill in the specification of the missing semantics.
+Once the specification is complete, you will implement it for Part 2.  To have a
+common interface across the class, to facilitate unit testing by the TAs, you
+will implement the instructor provided specification, rather than your own.
+
+The game of Forty Thieves uses two standard 52-card decks, for a total of 104
+cards.  The set-up of the board and the rules are as follows:
+\begin{itemize}
+\item For the initial board, a tableau of 10 stacks of 4 cards are created, with
+  the remaining cards still in the deck.  All of the tableau card stacks are
+  face up and visible.
+\item Above the tableau are 8, initially empty, foundation stacks.  There are
+  two foundation stacks for each suit.
+\item Cards can only be moved from the top of each tableau stack.  You may place
+  any card in an empty tableau space.
+\item The tableau cards can be moved from the top of one tableau to the top of
+  another, by building down by suit, from King to Ace.
+\item The foundation slots are built up by suit in the opposite order, from Ace
+  to King.
+\item Cards may be dealt one at a time from the remaining deck to the waste
+  stack.
+\item You may use the top card from the waste stack.  You may only go through
+  the deck once.
+\item The object of the game is to move all the cards to the foundation stacks.
+\end{itemize}
+
+You will complete the specifications for the modules described in the
+specification file.  Your specifications should not involve writing algorithms
+or pseudo-code.  The specifications should use discrete mathematics to specify
+the desired properties.  That is, you should be writing a {\it descriptive}
+specification as opposed to an {\it operational} specification.  Specifications
+within a module are free to use access programs defined within the current
+module or from another module that is used by the current module.  You should
+use the provided local functions.  You do not have to add more local
+functions, but you can, if you find them helpful.
+
+All of your code should be written in \CC{}.  All code files should be documented
+using doxygen.  Your specification/report (for Part 1) should be written using
+\LaTeX.  Your code should follow the given specification exactly.  In
+particular, you should not add public methods or procedures that are not
+specified and you should not change the number or order of parameters for
+methods or procedures.  If you need private methods or procedures, you can add
+them by explicitly declaring them as private.
+
+\section*{Part 1}
+
+\section *{Step \refstepcounter{stepnum} \thestepnum}
+
+Complete the specification by addressing the comments given in the specification
+file \texttt{spec.tex}.  You should note that this specification uses a
+``functional'' approach.  Rather than modify the state variables, the
+specification calls for the creation of a new object with the new state.
+
+\section *{Step \refstepcounter{stepnum} \thestepnum}
+
+Write a critique of the interface for the modules in this project.  Is there
+anything missing?  Is there anything you would consider changing?  Why?  Your
+critique should appear as the last section of \texttt{spec.tex}.
+
+\section *{Step \refstepcounter{stepnum} \thestepnum}
+
+Push your spec, which will include the critique, in (\texttt{spec.tex} and
+\texttt{spec.pdf}) to your GitLab project repo.  The report, including the
+specifications, should be written in \LaTeX.  This step should be completed by
+the deadline for Part 1 of the assignment.
+
+\section*{Part 2}
+
+\section *{Step \refstepcounter{stepnum} \thestepnum}
+
+After the report has been submitted, you will be provided with a complete
+specification for all of the modules.  Implement the modules in \CC{}.  Blank
+versions of the required source files and header files will be pushed to your
+personal repo.
+
+\section *{Step \refstepcounter{stepnum} \thestepnum}
+
+Experiment with the implementation.  Test the supplied \texttt{Makefile} rule
+for {\tt experiment}.  The purpose of this rule is to provide a means for
+``playing'' with the code as you develop it.
+
+\section *{Step \refstepcounter{stepnum} \thestepnum}
+
+Test the supplied \texttt{Makefile} rule for {\tt doc}.  This rule should
+compile your documentation into an html and \LaTeX{} version.  Along with the
+supplied \texttt{Makefile}, a doxygen configuration file is also given in your
+initial repo.  You should not change these files.
+
+\section *{Step \refstepcounter{stepnum} \thestepnum}
+
+In the \texttt{test} folder you should have a corresponding test file for the
+CardStack and GameBoard modules.  (You can determine the names
+for the testing files.)  The testing framework being used is called catch, as
+discussed in the tutorials.  The header file you need, along with the
+\texttt{testmain.cpp} file, will already be pushed to your repo.  Each procedure
+should have at least one test case.  For this assignment you are not required to
+submit a lab report, but you should still carefully think about your rationale
+for test case selection.  Please make an effort to test normal cases, boundary
+cases, and exception cases.
+
+The supplied makefile (named {\tt Makefile}) will have a rule named {\tt
+  test}.  This rule should run all of your test cases.
+
+\section *{Step \refstepcounter{stepnum} \thestepnum}
+
+Push all of your code files to your GitLab project repo.  This step should be
+completed by the deadline for Part 2 of the assignment.
+
+\subsubsection*{Notes}
+
+\begin{enumerate}
+\item Please put your name and macid at the top of each of your source files.
+\item Your program must work in the ITB labs on mills when compiled with its
+  versions of g++ (Version 7), \LaTeX, doxygen and make.
+\item So that you will have the correct version of g++, please add the
+  following:
+
+  \texttt{. /opt/rh/devtoolset-7/enable} 
+
+  to the bottom of your \texttt{.bashrc} file on mills.  (An earlier version of
+  g++ has to concurrently exist on mills; this allows you to switch to the
+  version we are using.)
+\item Many choices are available for containers to store sequences.  So
+  that unit testing will work between submissions, we need to make a standard
+  decision.  Therefore, please use a vector for your \CC{} implementation for the
+  constructor for Stack:
+\begin{lstlisting}
+template <class T>
+Stack<T>::Stack(std::vector<T> s)
+{
+  //details
+}
+
+\end{lstlisting}
+\item Pointers should \emph{not} be used in your interfaces.  All methods should
+  use pass by value and all methods should return a value.
+\item Implement templates following the approach used in the tutorial.  That is,
+  the CardT instance should be explicitly created in the \texttt{Stack.cpp}
+  file.  The header file \texttt{CardStackT.h} will only need to be the
+  appropriate typedefs.
+\item Enumerated types, like SuitT, should be implemented using \texttt{enum} in
+  \CC{}.
+\item The specification shows RankT restricted to values between 1 and 13.  For
+  your implementation you are not expected to enforce this.  You shoud use
+  \texttt{unsigned short int}.
+\item Natural numbers ($\mathbb{N}$) can be represented in \CC{} by
+  \texttt{unsigned int}.
+\item Tuple types, like CardT, should be implemented using \texttt{struct} in \CC{}.
+\item For exception, you should use the standard exceptions for \CC{}
+  (\url{http://www.cplusplus.com/reference/stdexcept/}).  The names of
+  exceptions were chosen for the specification to make this straightforward.
+  For the \CC{} implementation each exception name should be prefixed by
+  \texttt{std::}.  For instance, popping from an empty stack should raise a
+  \texttt{std::out\_of\_range} exception.
+\item \textbf{Your grade will be based to a significant extent on the ability of
+    your code to compile and its correctness.  If your code does not compile,
+    then your grade will be significantly reduced.}
+\item \textbf{Any changes to the assignment specification will be announced in
+    class.  It is your responsibility to be aware of these changes.  Please
+    monitor all pushes to the course git repo.}
+\end{enumerate}
+
+\end {document}

@@ -1,0 +1,625 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{hhline}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{url}
+
+\oddsidemargin -10mm
+\evensidemargin -10mm
+\textwidth 160mm
+\textheight 200mm
+\renewcommand\baselinestretch{1.0}
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+%% Comments
+
+\usepackage{color}
+
+\newif\ifcomments\commentstrue
+
+\ifcomments
+\newcommand{\authornote}[3]{\textcolor{#1}{[#3 ---#2]}}
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+\else
+\newcommand{\authornote}[3]{}
+\newcommand{\todo}[1]{}
+\fi
+
+\newcommand{\wss}[1]{\authornote{blue}{SS}{#1}}
+
+\title{Assignment 3, Part 1, Specification}
+\author{SFWR ENG 2AA4}
+
+\begin {document}
+
+\maketitle
+This Module Interface Specification (MIS) document contains modules, types and
+methods for implementing the state of a game of Forty Thieves solitaire.
+
+In applying the specification, there will be cases that involve undefinedness.
+We will interpret undefinedness following~\cite{Farmer2004}:
+
+If $p: \alpha_1 \times .... \times \alpha_n \rightarrow \mathbb{B}$ and any of
+$a_1, ..., a_n$ is undefined, then $p(a_1, ..., a_n)$ is False.  For instance,
+if $p(x) = 1/x < 1$, then $p(0) = \text{False}$.  In the language of our
+specification, if evaluating an expression generates an exception, then the
+value of the expression is undefined.
+
+\wss{The parts that you need to fill in are marked by comments, like this one.
+  In several of the modules local functions are specified.  You can use these
+  local functions to complete the missing specifications.}
+
+\wss{As you edit the tex source, please leave the \texttt{wss} comments in the
+  file.  Put your answer \textbf{before} the comment.  This will make grading
+  easier.}
+
+\bibliographystyle{plain}
+\bibliography{SmithCollectedRefs}
+
+\newpage
+
+\section* {Card Types Module}
+
+\subsection*{Module}
+
+CardTypes
+
+\subsection* {Uses}
+
+N/A
+
+\subsection* {Syntax}
+
+\subsubsection* {Exported Constants}
+
+TOTAL\_CARDS = 104\\
+ACE = 1\\
+JACK = 11\\
+QUEEN = 12\\
+KING = 13
+
+\subsubsection* {Exported Types}
+
+SuitT = \{Heart, Diamond, Club, Spade\}\\ 
+RankT = [1..13]\\
+CategoryT = \{Tableau, Foundation, Deck, Waste\}\\
+CardT = tuple of (s: SuitT, r: RankT)
+
+\subsubsection* {Exported Access Programs}
+
+None
+
+\subsection* {Semantics}
+
+\subsubsection* {State Variables}
+
+None
+
+\subsubsection* {State Invariant}
+
+None
+
+\newpage
+
+\section* {Generic Stack Module}
+
+\subsection* {Generic Template Module}
+
+Stack(T)
+
+\subsection* {Uses}
+
+N/A
+
+\subsection* {Syntax}
+
+\subsubsection* {Exported Types}
+
+Stack(T) = ?
+
+\subsubsection* {Exported Constants}
+
+None
+
+\subsubsection* {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | p{5cm} |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+new Stack & seq of T & Stack & none\\
+\hline
+push & T & Stack & none\\
+\hline
+pop & & Stack & out\_of\_range\\
+\hline
+top & & T & out\_of\_range\\
+\hline
+size & & $\mathbb{N}$ & \\
+\hline
+toSeq& & seq of T & \\
+\hline
+\end{tabular}
+
+\subsection* {Semantics}
+
+\subsubsection* {State Variables}
+
+$S$: seq of T
+
+\subsubsection* {State Invariant}
+
+None
+
+\subsubsection* {Assumptions \& Design Decisions}
+
+\begin{itemize}
+\item The Stack(T) constructor is called for each object instance before any
+  other access routine is called for that object.  The constructor can only be
+  called once.
+\item Though the toSeq() method violates the essential property of the stack
+  object, since this could be achieved by calling top and pop many times, this
+  method is provided as a convenience to the client. In fact, it increases the
+  property of separation of concerns since this means that the client does not
+  have to worry about details of building their own sequence from the sequence
+  of pops.
+\end{itemize}
+
+\subsubsection* {Access Routine Semantics}
+
+new Stack($s$):
+\begin{itemize}
+\item transition: $S := s$
+
+\item output: $\mathit{out} := \mathit{self}$
+\item exception: none
+\end{itemize}
+
+\noindent push($e$):
+\begin{itemize}
+\item output: $out := \text{new Stack}(S\ ||\ \langle e \rangle)$
+\item exception: none
+\end{itemize}
+
+\noindent pop():
+\begin{itemize}
+\item output: $out := \text{new Stack}(S[0..|S| - 2])$
+
+\item exception: $exc := (|S| = 0 \Rightarrow \text{out\_of\_range})$
+
+\end{itemize}
+
+\noindent top():
+\begin{itemize}
+\item output: $\mathit{out} := S[|S| - 1]$
+
+\item exception: $exc := (|S| = 0 \Rightarrow \text{out\_of\_range})$
+
+\end{itemize}
+
+\noindent size():
+\begin{itemize}
+\item output: $\mathit{out} := |S|$
+\item exception: None
+\end{itemize}
+
+\noindent toSeq():
+\begin{itemize}
+\item output: $\mathit{out} := S$
+\item exception: None
+
+\end{itemize}
+
+\newpage
+
+\section* {CardStack Module}
+
+\subsection* {Template Module}
+
+CardStackT is Stack(CardT)
+
+\newpage
+
+\section* {Game Board ADT Module}
+
+\subsection*{Template Module}
+
+BoardT
+
+\subsection* {Uses}
+
+\noindent CardTypes\\
+\noindent CardStack
+
+\subsection* {Syntax}
+
+\subsubsection* {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+new BoardT  & seq of CardT & BoardT & invalid\_argument\\
+\hline
+is\_valid\_tab\_mv & CategoryT, $\mathbb{N}$, $\mathbb{N}$ & $\mathbb{B}$ & out\_of\_range\\
+\hline
+is\_valid\_waste\_mv & CategoryT, $\mathbb{N}$ & $\mathbb{B}$ &
+                                                                invalid\_argument, out\_of\_range\\
+\hline
+is\_valid\_deck\_mv &  &  $\mathbb{B}$ & \\
+\hline
+tab\_mv & CategoryT, $\mathbb{N}$, $\mathbb{N}$ & & invalid\_argument\\
+\hline
+waste\_mv & CategoryT, $\mathbb{N}$ & & invalid\_argument\\
+\hline
+deck\_mv &  & & invalid\_argument\\
+\hline
+get\_tab & $\mathbb{N}$ & CardStackT & out\_of\_range\\
+\hline
+get\_foundation & $\mathbb{N}$ & CardStackT & out\_of\_range\\
+\hline
+get\_deck &  & CardStackT & \\
+\hline
+get\_waste &  & CardStackT & \\
+\hline
+valid\_mv\_exists & & $\mathbb{B}$ &\\
+\hline
+is\_win\_state & & $\mathbb{B}$ & \\
+\hline
+\end{tabular}
+
+\subsection* {Semantics}
+
+\subsubsection* {State Variables}
+
+$T$: SeqCrdStckT \textit{\# Tableau}\\
+$F$: SeqCrdStckT \textit{\# Foundation}\\
+$D$: CardStackT \textit{\# Deck}\\
+$W$: CardStackT \textit{\# Waste}\\
+
+\subsubsection* {State Invariant}
+
+$|T| = 10$\\
+$|F| = 8$\\
+cnt\_cards($T$, $F$, $D$, $W$, $\lambda c: \text{True}$) = TOTAL\_CARDS\\
+two\_decks($T$, $F$, $D$, $W$) \textit{\# each card appears twice in the combined deck}
+
+\subsubsection* {Assumptions \& Design Decisions}
+
+\begin{itemize}
+
+\item The BoardT constructor is called before any other access
+  routine is called on that instance. Once a BoardT has been created, the
+  constructor will not be called on it again.
+
+\item The Foundation stacks must start with an ace, but any Foundation stack can
+  start with any suit. Once an Ace of that suit is placed there, this Foundation
+  stack becomes that type of stack and only those type of cards can be placed
+  there.
+
+\item Once a card has been moved to a Foundation stack, it cannot be moved again.
+
+\item For better scalability, this module is specified as an Abstract Data Type
+  (ADT) instead of an Abstract Object. This would allow multiple games to be
+  created and tracked at once by a client.
+
+\item The getter function is provided, though violating the property of being
+  essential, to give a would-be view function easy access to the state of the
+  game. This ensures that the model is able to be easily integrated with a game
+  system in the future.  Although outside of the scope of this assignment, the
+  view function could be part of a Model View Controller design pattern implementation
+  (\url{https://blog.codinghorror.com/understanding-model-view-controller/})
+
+\item A function will be available to create a double deck of cards that
+  consists of a random permutation of two regular decks of cards (TOTAL\_CARDS
+  cards total).  This double deck of cards can be used to build the game board.
+
+\end{itemize}
+
+\subsubsection* {Access Routine Semantics}
+
+\noindent BoardT($\mathit{deck}$):
+\begin{itemize}
+\item transition: 
+$$T, F, D, W := \text{tab\_deck}(\mathit{deck}[0..39]),
+  \text{init\_seq}(8), \text{CardStackT}(\mathit{deck}[40..103]),
+  \text{CardStackT}(\langle \rangle)$$
+\item exception: $exc := (\lnot \text{two\_decks}(\text{init\_seq}(10),
+  \text{init\_seq}(8), \text{CardStackT}(\mathit{deck}),
+  \text{CardStackT}(\langle \rangle) ) \Rightarrow \text{invalid\_argument})$
+\end{itemize}
+
+\newpage
+
+\noindent is\_valid\_tab\_mv($c, n_0, n_1$):
+\begin{itemize}
+\item output:
+
+\begin{tabular}{|p{3cm}|l|}
+\hhline{~|-|}
+\multicolumn{1}{r|}{} & \multicolumn{1}{l|}{$out :=$}\\
+\hhline{|-|-|}
+$c = \mbox{Tableau}$ & valid\_tab\_tab($n_0$,$n_1$) \\
+\hhline{|-|-|}
+$c = \mbox{Foundation}$ & valid\_tab\_foundation($n_0$,$n_1$) \\
+\hhline{|-|-|}
+$c = \mbox{Deck}$& False \\
+\hhline{|-|-|}
+$c = \mbox{Waste}$ & False \\
+\hhline{|-|-|}
+\end{tabular}
+
+\item exception:
+
+\begin{tabular}{|p{14cm}|l|}
+  \hhline{~|-|}
+  \multicolumn{1}{r|}{} & \multicolumn{1}{l|}{$exc :=$}\\
+  \hhline{|-|-|}
+  $c = \mbox{Tableau} \wedge \neg(\text{is\_valid\_pos}(\text{Tableau}, n_0) \wedge
+  \text{is\_valid\_pos}(\text{Tableau}, n_1))$ & out\_of\_range\\
+  \hhline{|-|-|}
+  $c = \mbox{Foundation} \wedge \neg(\text{is\_valid\_pos}(\text{Tableau}, n_0) \wedge
+  \text{is\_valid\_pos}(\text{Foundation}, n_1))$ & out\_of\_range\\
+  \hhline{|-|-|}
+\end{tabular}
+\end{itemize}
+
+\noindent is\_valid\_waste\_mv($c, n$):
+\begin{itemize}
+\item output:
+
+\begin{tabular}{|p{3cm}|l|}
+\hhline{~|-|}
+\multicolumn{1}{r|}{} & \multicolumn{1}{l|}{$out :=$}\\
+\hhline{|-|-|}
+$c = \mbox{Tableau}$ & valid\_waste\_tab($n$) \\
+\hhline{|-|-|}
+$c = \mbox{Foundation}$ & valid\_waste\_foundation($n$) \\
+\hhline{|-|-|}
+$c = \mbox{Deck}$& False \\
+\hhline{|-|-|}
+$c = \mbox{Waste}$ & False \\
+\hhline{|-|-|}
+\end{tabular}
+
+\item exception:
+
+\begin{tabular}{|p{10cm}|l|}
+  \hhline{~|-|}
+  \multicolumn{1}{r|}{} & \multicolumn{1}{l|}{$exc :=$}\\
+  \hhline{|-|-|}
+  $\text{W.size()} = 0$ & invalid\_argument\\
+  \hhline{|-|-|}
+  $c = \mbox{Tableau} \wedge \neg \text{is\_valid\_pos}(\text{Tableau}, n)$ & out\_of\_range\\
+  \hhline{|-|-|}
+  $c = \mbox{Foundation} \wedge \neg \text{is\_valid\_pos}(\text{Foundation}, n)$ & out\_of\_range\\
+  \hhline{|-|-|}
+\end{tabular}
+\end{itemize}
+
+\noindent is\_valid\_deck\_mv():
+\begin{itemize}
+\item output: $out := D.\text{size}() > 0$
+\item exception: None
+\end{itemize}
+
+\noindent tab\_mv($c, n_0, n_1$):
+\begin{itemize}
+\item transition:
+
+\begin{tabular}{|p{3cm}|l|}
+\hhline{|-|-|}
+$c = \mbox{Tableau}$ & T[$n_0$], T[$n_1$] := T[$n_0$].pop(), T[$n_1$].push(T[$n_0$].top())\\
+\hhline{|-|-|}
+$c = \mbox{Foundation}$ & T[$n_0$], F[$n_1$] := T[$n_0$].pop(), F[$n_1$].push(T[$n_0$].top())\\
+\hhline{|-|-|}
+\end{tabular}
+
+\item exception: $exc := (\neg \text{is\_valid\_tab\_mv}(c, n_0, n_1)
+  \Rightarrow \text{invalid\_argument})$
+
+\end{itemize}
+
+\noindent waste\_mv($c, n$):
+\begin{itemize}
+\item transition:
+
+\begin{tabular}{|p{3cm}|l|}
+\hhline{|-|-|}
+$c = \mbox{Tableau}$ & W, T[$n$] := W.pop(), T[$n$].push(W.top())\\
+\hhline{|-|-|}
+$c = \mbox{Foundation}$ & W, F[$n$] := W.pop(), F[$n$].push(W.top())\\
+\hhline{|-|-|}
+\end{tabular}
+
+\item exception:
+  $exc := (\neg \text{is\_valid\_waste\_mv}(c, n) \Rightarrow
+  \text{invalid\_argument})$
+
+\end{itemize}
+
+\noindent deck\_mv():
+\begin{itemize}
+\item transition: D, W := D.pop(), W.push(D.top())
+\item exception:
+  $exc := (\neg \text{is\_valid\_deck\_mv}() \Rightarrow \text{invalid\_argument})$
+\end{itemize}
+
+\noindent get\_tab($i$):
+\begin{itemize}
+\item output: $out := T[i]$
+\item exception: $exc : (\neg \text{is\_valid\_pos}(\text{Tableau}, i) \Rightarrow \text{out\_of\_range})$
+\end{itemize}
+
+\noindent get\_foundation($i$):
+\begin{itemize}
+\item output: $out := F[i]$
+\item exception: $exc : (\neg \text{is\_valid\_pos}(\text{Foundation}, i) \Rightarrow \text{out\_of\_range})$
+\end{itemize}
+
+\noindent get\_deck():
+\begin{itemize}
+\item output: $out := D$
+\item exception: None
+\end{itemize}
+
+\noindent get\_waste():
+\begin{itemize}
+\item output: $out := W$
+\item exception: None
+\end{itemize}
+
+\noindent valid\_mv\_exists():
+\begin{itemize}
+\item output: $out := \text{valid\_tab\_mv} \vee \text{valid\_waste\_mv} \vee
+  \text{is\_valid\_deck\_mv()}$ where\\
+
+  $\text{valid\_tab\_mv} \equiv (\exists c: \text{CategoryT}, n_0: \mathbb{N},
+  n_1: \mathbb{N} | c \in \{ \text{Tableau}, \text{Foundation} \} \wedge
+  \text{is\_valid\_pos}(\text{Tableau}, n_0) \wedge
+  \text{is\_valid\_pos}(c, n_1): \text{is\_valid\_tab\_mv}(c, n_0, n_1))$\\
+
+  $\text{valid\_waste\_mv} \equiv (\exists c: \text{CategoryT}, n: \mathbb{N} |
+  c \in \{ \text{Tableau}, \text{Foundation} \} \wedge \text{is\_valid\_pos}(c,
+  n) : \text{is\_valid\_waste\_mv}(c, n))$
+
+\item exception: None
+
+\end{itemize}
+
+\noindent is\_win\_state():
+\begin{itemize}
+\item output: $out := (\forall\, i: \mathbb{N} | i \in [0..7] :
+  F[i].\text{size}() > 0 \wedge F[i].\text{top}().r = \text{KING})$
+\item exception: None
+
+\end{itemize}
+
+\subsection*{Local Types}
+
+SeqCrdStckT = seq of CardStackT
+
+\subsection*{Local Functions}
+
+\noindent $\text{two\_decks} : \text{SeqCrdStckT} \times \text{SeqCrdStckT}
+\times \text{CardStackT} \times \text{CardStackT} \rightarrow \mathbb{B}$\\
+\noindent
+$\text{two\_decks}(T, F, D, W) \equiv$ 
+$$(\forall \mathit{st}: \text{SuitT}, \mathit{rk}:
+\text{RankT} | \mathit{st} \in \text{SuitT} \wedge \mathit{rk} \in \text{RankT}
+: \text{cnt\_cards}(T, F, D, W, \lambda c: c.s = st \wedge c.r = rk) = 2 )$$
+
+\noindent $\text{cnt\_cards\_seq}: \text{SeqCrdStckT} \times (\text{CardT}
+\rightarrow \mathbb{B}) \rightarrow \mathbb{N}$\\
+\noindent $\text{cnt\_cards\_seq}(S, f) \equiv (+ s: \text{CardStackT} | s \in S :
+\text{cnt\_cards\_stack}(s, f))$\\
+
+\noindent $\text{cnt\_cards\_stack}: \text{CardStackT} \times (\text{CardT}
+\rightarrow \mathbb{B}) \rightarrow \mathbb{N}$\\
+\noindent $\text{cnt\_cards\_stack}(s, f) \equiv (+ c: \text{CardT} | c \in
+s.\text{toSeq}() \wedge f(c) : 1)$\\
+
+\noindent $\text{cnt\_cards}: \text{SeqCrdStckT} \times \text{SeqCrdStckT}
+\times \text{CardStackT} \times \text{CardStackT} \times (\text{CardT}
+\rightarrow \mathbb{B}) \rightarrow \mathbb{N}$\\
+\noindent $\text{cnt\_cards}(T, F, D, W, f) \equiv \text{cnt\_cards\_seq}(T,
+f) + \text{cnt\_cards\_seq}(F, f) + \text{cnt\_cards\_stack}(D, f) +
+\text{cnt\_cards\_stack}(W, f)$\\
+
+\noindent $\text{init\_seq}: \mathbb{N} \rightarrow \text{SeqCrdStckT}$\\
+\noindent $\text{init\_seq}(n) \equiv s \text{ such that } (|s| = n \land (\forall\, i
+\in [0..n-1] : s[i] = \text{CardStackT}(\langle \rangle))$\\
+
+\noindent $\text{tab\_deck}: \text{(seq of CardT)} \rightarrow \text{SeqCrdStckT}$\\
+\noindent $\text{tab\_deck} (\mathit{deck}) \equiv T$ such that
+$(\forall i: \mathbb{N} | i \in [0..9] : T[i].\text{toSeq}() =
+\mathit{deck}[4i .. 4(i+1)-1])$\\
+
+\noindent is\_valid\_pos: $ \text{CategoryT} \times \mathbb{N} \rightarrow \mathbb{B}$\\
+\noindent is\_valid\_pos($c, n$) $\equiv (c = \text{Tableau} \Rightarrow n \in
+[0..9] | c = \text{Foundation} \Rightarrow n \in [0..7] | \text{True} \Rightarrow \text{True})$\\
+
+\noindent valid\_tab\_tab: $\mathbb{N} \times \mathbb{N} \rightarrow \mathbb{B}$\\
+\noindent valid\_tab\_tab ($n_0, n_1$) $\equiv$
+
+\begin{tabular}{|p{4cm}|p{3.5cm}|l|}
+\hhline{|-|-|-|}
+$T[n_0].\text{size}() > 0$ & T[$n_1$].size() $>$ 0 & tab\_placeable(T[$n_0$].top(), T[$n_1$].top())\\
+\hhline{|~|-|-|}
+ & T[$n_1$].size() = 0 & True\\
+\hhline{|-|-|-|}
+T[$n_0$].size() = 0 & T[$n_1$].size() $>$ 0 & False\\
+\hhline{|~|-|-|}
+& T[$n_1$].size() $=$ 0 & False\\
+\hhline{|-|-|-|}
+\end{tabular}\\\\
+
+\noindent valid\_tab\_foundation: $\mathbb{N} \times \mathbb{N} \rightarrow \mathbb{B}$\\
+\noindent valid\_tab\_foundation($n_0, n_1$) $\equiv$
+
+\begin{tabular}{|p{3.5cm}|p{3.5cm}|l|p{4cm}|}
+\hhline{|-|-|-|-|}
+T[$n_0$].size() $>$ 0 & F[$n_1$].size() $>$ 0 &  foundation\_placeable(T[$n_0$].top(), F[$n_1$].top())\\
+\hhline{|~|-|-|-|}
+ & F[$n_1$].size() = 0 & T[$n_0$].top().r = ACE\\
+ \hhline{|-|-|-|-|}
+T[$n_0$].size() = 0 & F[$n_1$].size() $>$ 0 & False\\
+\hhline{|~|-|-|-|}
+ & F[$n_1$].size() = 0 & False\\
+\hhline{|-|-|-|-|}
+\end{tabular}\\\\
+
+\noindent valid\_waste\_tab: $\mathbb{N} \rightarrow \mathbb{B}$\\
+\noindent valid\_waste\_tab ($n$) $\equiv$
+
+\begin{tabular}{|p{4cm}|l|}
+\hhline{|-|-|}
+T[$n$].size() $>$ 0 & tab\_placeable(W.top(), T[$n$].top())\\
+\hhline{|-|-|}
+T[$n$].size() = 0 & True\\
+\hhline{|-|-|}
+\end{tabular}\\\\
+
+\noindent valid\_waste\_foundation: $\mathbb{N} \rightarrow \mathbb{B}$\\
+\noindent valid\_waste\_foundation ($n$) $\equiv$
+
+\begin{tabular}{|p{4cm}|l|}
+\hhline{|-|-|}
+F[$n$].size() $>$ 0 & foundation\_placeable(W.top(), F[$n$].top())\\
+\hhline{|-|-|}
+F[$n$].size() = 0 & W.top().r = ACE\\
+\hhline{|-|-|}
+\end{tabular}\\\\
+
+\noindent tab\_placeable: $\text{CardT} \times \text{CardT} \rightarrow \mathbb{B}$\\
+\noindent tab\_placeable($c, d$) $\equiv c.s = d.s \wedge c.r = d.r - 1$\\
+
+\noindent foundation\_placeable: $\text{CardT} \times \text{CardT} \rightarrow \mathbb{B}$\\
+\noindent foundation\_placeable($c, d$) $\equiv c.s = d.s \wedge c.r = d.r + 1$\\
+
+\newpage
+
+\section*{Critique of Design}
+
+\wss{Write a critique of the interface for the modules in this project.  Is there
+anything missing?  Is there anything you would consider changing?  Why?}\\
+
+\noindent Potential discussion points:
+
+\begin{itemize}
+\item The stack module provides a toSeq module that violates essentiality.  To
+  address this, another module could be built to provide the toSeq service
+  through a function that takes a stack as input and return a sequence.
+\end{itemize}
+
+\end {document}
